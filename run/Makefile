@@ -12,8 +12,8 @@ LIMIT=100000
 
 
 ### 2.2 SRILM options:/matl
-LM_NGRAM=4# n-gram order
-LM_VOCAB=230 # words seen less than this in GETTRAIN will be replaced with <unk>
+LM_NGRAM=2# n-gram order
+LM_VOCAB=100 # words seen less than this in GETTRAIN will be replaced with <unk>
 LM_MTYPE=i686-m64 # architecture for compiling srilm
 
 train.vocab-all.gz: ${DATA}
@@ -32,11 +32,12 @@ train.vocab-no-punct.gz: train.vocab-all.gz
 
 train.lm.gz: ${DATA} train.vocab.gz # wc=128821128 570627415 4735429610
 	zcat $< | head -n -${LIMIT} | awk 'length($$0) < 1001' | \
-	ngram-count -order ${LM_NGRAM} -kndiscount -interpolate -unk -vocab train.vocab.gz -text - -lm $@
+	ngram-count -order ${LM_NGRAM} -kndiscount -interpolate -unk -vocab train.vocab.gz -text - -lm train.lm${LM_NGRAM}.gz
 
 train.lm-no-punct.gz: ${DATA} train.vocab-no-punct.gz
 	zcat $< | awk 'length($$0) < 1001' | \
-	ngram-count -order ${LM_NGRAM} -kndiscount -interpolate -unk -vocab train.vocab-no-punct.gz -text - -lm $@
+	ngram-count -order ${LM_NGRAM} -kndiscount -interpolate -unk -vocab train.vocab-no-punct.gz -text - -lm train.lm${LM_NGRAM}-no-punct.gz
+
 
 %.ppl.gz:
 	#test.ppl.gz trial.ppl.gz
