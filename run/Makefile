@@ -38,7 +38,6 @@ train.lm-no-punct.gz: ${DATA} train.vocab-no-punct.gz
 	zcat $< | awk 'length($$0) < 1001' | \
 	ngram-count -order ${LM_NGRAM} -kndiscount -interpolate -unk -vocab train.vocab-no-punct.gz -text - -lm train.lm${LM_NGRAM}-no-punct.gz
 
-
 %.ppl.gz:
 	#test.ppl.gz trial.ppl.gz
 	zcat $*.tok.gz | ngram -order ${LM_NGRAM} \
@@ -52,4 +51,13 @@ divide-data: tweets-shuffle.txt
 	head -1000 $< | head -600 | cut -f2- -d ' ' > training.tweets.txt
 	head -1000 $< | tail -400 | cut -f1 -d ' '  > test.ids.txt
 	head -1000 $< | tail -400 | cut -f2- -d ' ' > test.tweets.txt
-	
+
+### 2.3 FASTSUBS options:
+FS_NSUB=100 # go until you have this many substitutes
+FS_PSUB=1.0 # or this much cumulative probability
+FS_OPTIONS=-n ${FS_NSUB} -p ${FS_PSUB}
+
+%.sub.gz: %.context.gz train.lm-no-punct.gz
+	zcat $< | ../bin/fastsubs ${FS_OPTIONS} train.lm-no-punct.gz | grep -P '^__XX__\t' | gzip > $@
+
+
