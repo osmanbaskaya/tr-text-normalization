@@ -25,8 +25,8 @@ train.vocab.gz: train.vocab-all.gz
 	zcat $@ | wc -l
 
 train.vocab-no-punct.gz: train.vocab-all.gz
-	zcat $< | awk '{if ($$2 >= ${LM_VOCAB}) print $$1}' | \
-	tr -cd 'a-zA-ZöüşİıŞÇÜĞÖğç0-9#/\\\n' |\
+	zcat $< | awk '{if ($$2 >= ${LM_VOCAB}) print $$0}' | \
+	tr -cd 'a-zA-ZÖöÜüŞşİıÇçÜüĞğ0-9#/\\\n\t' |\
 	tr '[:upper:]' '[:lower:]' | sort | uniq | gzip > $@
 	zcat $@ | wc -l
 
