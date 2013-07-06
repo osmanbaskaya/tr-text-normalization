@@ -57,7 +57,8 @@ FS_NSUB=100 # go until you have this many substitutes
 FS_PSUB=1.0 # or this much cumulative probability
 FS_OPTIONS=-n ${FS_NSUB} -p ${FS_PSUB}
 
-%.sub.gz: %.context.gz train.lm-no-punct.gz
-	zcat $< | ../bin/fastsubs ${FS_OPTIONS} train.lm-no-punct.gz | grep -P '^__XX__\t' | gzip > $@
+%.sub.gz: %.context.gz train.lm2-no-punct.gz
+	zcat $< | ../bin/fastsubs ${FS_OPTIONS} train.lm2-no-punct.gz | \
+	grep -P '^__XX__\t' | gzip > $@
 
 
